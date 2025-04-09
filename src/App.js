@@ -1,25 +1,33 @@
 import logo from './logo.svg';
 import './App.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import Side_bar from './mainPages/components/Side_bar.js';
+import Main_bar from './mainPages/components/Main_bar.js';
+import { BrowserRouter } from 'react-router-dom';
+import { useState } from 'react';
+import Login from './mainPages/components/Login.js';
 
 function App() {
+  const [login, setLogin] = useState(false);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <div className='App container-fluid row vh-100 p-0 m-0'>
+        {/* {!login && <div>
+          <Login setLogin={setLogin}/>
+        </div>} */}
+
+        {/* {login&&<> */}
+          <div className='sidebar bg-dark col-auto text-light px-2'>
+            <Side_bar />
+          </div>
+          <div className='mainbar col p-0 '>
+            <Main_bar setLogin={setLogin}/>
+          </div>
+        {/* </>} */}
+      </div>
+    </BrowserRouter>
   );
 }
 
 export default App;
+

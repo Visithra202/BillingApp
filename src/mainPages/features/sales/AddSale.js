@@ -210,30 +210,6 @@ function PaymentMode({ cash, setCash, credit, setCredit, account, setAccount }) 
 
 function SaleProducts({ selectedProducts, setSelectedProducts }) {
 
-  // const handleQuantityChange = (index, newQuantity) => {
-  //   if (isNaN(newQuantity)) return;
-
-  //   const quantity = newQuantity === "" ? 0 : Number(newQuantity);
-  //   if (quantity > selectedProducts[index].quantity) {
-  //     alert(`Quantity must be less than or equal to ${selectedProducts[index].quantity}`);
-  //     return;
-  //   }
-
-  //   const updatedProducts = selectedProducts.map((product, i) => {
-  //     if (i === index) {
-  //       return {
-  //         ...product,
-  //         sale_quantity: quantity,
-  //         total_price: quantity * product.sale_price,
-  //       };
-  //     }
-  //     return product;
-  //   });
-
-  //   setSelectedProducts(updatedProducts);
-  // };
-
-
   const handleQuantityChange = (index, newQuantity) => {
     if (isNaN(newQuantity)) return;
 
@@ -247,18 +223,6 @@ function SaleProducts({ selectedProducts, setSelectedProducts }) {
     updatedProducts[index].sale_quantity = quantity;
     updatedProducts[index].total_price = quantity * updatedProducts[index].unit_price;
     setSelectedProducts(updatedProducts);
-
-    // const updatedProducts = selectedProducts.map((product, i) => {
-    //   if (i === index) {
-    //     return {
-    //       ...product,
-    //       sale_quantity: quantity,
-    //       total_price: quantity * product.sale_price,
-    //     };
-    //   }
-    //   return product;
-    // });
-    // setSelectedProducts(updatedProducts);
   };
 
   const handleDeleteProduct = (index) => {
@@ -346,42 +310,7 @@ function ProductSelection({ activeDropdown, setActiveDropdown, searchProduct, se
     setLoading(false);
   }, 300)
 
-  // const handleProduct = (product) => {
-  //   setSelectedProducts((prevSelectedProducts) => {
-  //     const existingProductIndex = prevSelectedProducts.findIndex((prod) => prod.item_id === product.item_id);
-  //     if (existingProductIndex !== -1) {
-  //       const updatedProducts = [...prevSelectedProducts];
-
-  //       // Check stock availability before updating quantity
-  //       if (updatedProducts[existingProductIndex].sale_quantity + 1 <= product.quantity) {
-  //         updatedProducts[existingProductIndex] = {
-  //           ...updatedProducts[existingProductIndex],
-  //           sale_quantity: updatedProducts[existingProductIndex].sale_quantity + 1,
-  //           total_price: (updatedProducts[existingProductIndex].sale_quantity + 1) * updatedProducts[existingProductIndex].sale_price,
-  //         };
-
-
-  //       } else {
-  //         alert(`Only ${product.quantity} items available in stock`);
-  //       }
-
-  //       return updatedProducts;
-  //     } else {
-  //       if (product.quantity >= 1) {
-  //         return [
-  //           ...prevSelectedProducts,
-  //           { ...product, sale_quantity: 1, unit_price: product.sale_price, total_price: Number(product.sale_price) }
-  //         ];
-  //       } else {
-  //         alert(`No stock available for ${product.item_name}`);
-  //         return prevSelectedProducts;
-  //       }
-  //     }
-  //   });
-
-  //   setSearchProduct('');
-  //   setActiveDropdown(null);
-  // };
+  
 
   const handleProduct = (product) => {
     setSelectedProducts((prevSelectedProducts) => {

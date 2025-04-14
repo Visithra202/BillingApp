@@ -58,9 +58,9 @@ export default function AddPurchase() {
       seller: selectedSeller,
       purchase_id: billNo,
       purchase_products: selectedProducts.map((item) => ({
-        product: item.item_id,
+        product: item.product,
         quantity: item.purchase_quantity,
-        unit_price: item.sale_price,
+        unit_price: item.unit_price,
         total_price: item.total_price,
       })),
       purchase_payment: {
@@ -75,7 +75,6 @@ export default function AddPurchase() {
 
     axios.post('http://localhost:8000/add-purchase/', purchaseData)
       .then(response => {
-        console.log('Purchase Submitted:', response.data);
         alert('Purchase added successfully')
         handleReset();
         axios.get('http://localhost:8000/get-purchase-bill-no/')
@@ -87,10 +86,6 @@ export default function AddPurchase() {
           });
       })
       .catch(error => console.error('Error submitting purchase:', error));
-
-
-
-
   };
 
   const handleReset = () => {
@@ -221,17 +216,9 @@ function PurchaseProducts({ selectedProducts, setSelectedProducts }) {
 
     const quantity = newQuantity === "" ? 0 : Number(newQuantity);
 
-    const updatedProducts = selectedProducts.map((product, i) => {
-      if (i === index) {
-        return {
-          ...product,
-          purchase_quantity: quantity,
-          total_price: quantity * product.sale_price,
-        };
-      }
-      return product;
-    });
-
+    const updatedProducts = [...selectedProducts];
+    updatedProducts[index].purchase_quantity = quantity;
+    updatedProducts[index].total_price = quantity * updatedProducts[index].unit_price;
     setSelectedProducts(updatedProducts);
   };
 
@@ -258,8 +245,8 @@ function PurchaseProducts({ selectedProducts, setSelectedProducts }) {
             selectedProducts.map((item, index) => (
               <tr key={index}>
                 <td>{index + 1}</td>
-                <td>{item.item_name}</td>
-                <td className='text-end'>{item.sale_price}</td>
+                <td>{item.product.item_name}</td>
+                <td className='text-end'>{item.unit_price}</td>
                 <td className='text-end'>
                   <input type="text" value={item.purchase_quantity} className="text-end border rounded pe-2"
                     style={{ width: "60px" }} onChange={(e) => handleQuantityChange(index, e.target.value)} />
@@ -322,20 +309,20 @@ function ProductSelection({ dropdown, setDropdown, searchProduct, setSearchProdu
 
   const handleProduct = (product) => {
     setSelectedProducts((prevSelectedProducts) => {
-      const existingProductIndex = prevSelectedProducts.findIndex((prod) => prod.item_id === product.item_id);
+      const existingProductIndex = prevSelectedProducts.findIndex((prod) => prod.product.item_id === product.item_id);
       if (existingProductIndex !== -1) {
         const updatedProducts = [...prevSelectedProducts];
 
         updatedProducts[existingProductIndex] = {
           ...updatedProducts[existingProductIndex],
           purchase_quantity: updatedProducts[existingProductIndex].purchase_quantity + 1,
-          total_price: (updatedProducts[existingProductIndex].purchase_quantity + 1) * updatedProducts[existingProductIndex].sale_price,
+          total_price: (updatedProducts[existingProductIndex].purchase_quantity + 1) * updatedProducts[existingProductIndex].unit_price,
         }
         return updatedProducts;
       } else {
         return [
           ...prevSelectedProducts,
-          { ...product, purchase_quantity: 1, unit_price: product.sale_price, total_price: Number(product.sale_price) }
+          { product, purchase_quantity: 1, unit_price: Number(product.sale_price), total_price: Number(product.sale_price) }
         ];
       }
     });

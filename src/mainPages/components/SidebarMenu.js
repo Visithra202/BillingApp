@@ -116,6 +116,11 @@ function LoanMenu() {
                     <span><i className="bi bi-ticket-detailed me-2"></i>Loan details</span>
                 </Link>
             </li>
+            <li className='pt-1'>
+                <Link to='loanCollection' className='text-decoration-none text-light'>
+                    <span><i class="bi bi-collection me-2"></i>Loan collection</span>
+                </Link>
+            </li>
         </ul>
     )
 }

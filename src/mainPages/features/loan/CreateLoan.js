@@ -6,21 +6,40 @@ import { useNavigate } from 'react-router-dom';
 export default function CreateLoan() {
     const [loanFormData, setLoanFormData] = useState({});
     const [searchCustomer, setSearchCustomer] = useState({});
+    const date = new Date();
+
+    const calculateEmi = (loan_amount, term, frequency) => {
+        const principal = parseFloat(loan_amount);
+        const duration = frequency === 'Weekly' ? parseFloat(term) * 4 : parseFloat(term);
+      
+        if (isNaN(principal) || isNaN(duration) || duration === 0) return null;
+      
+        return (principal / duration).toFixed(2);
+      };
+      
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(!searchCustomer.customer_name||!searchCustomer.mph){
+        if (!searchCustomer.customer_name || !searchCustomer.mph) {
             alert('Please select a customer or add customer')
             return;
         }
-        
-        const loanData={
-            ...loanFormData,
-            customer:searchCustomer
-        }
 
+        const loanData = {
+            payment_amount: loanFormData.payment_amount,
+            loan_amount: loanFormData.loan_amount,
+            interest:loanFormData.payment_amount-loanFormData.loan_amount,
+            payment_freq: loanFormData.payment_frequency,
+            term: loanFormData.term,
+            emi_amount: calculateEmi(loanFormData.loan_amount, loanFormData.term, loanFormData.payment_frequency),
+            loan_date:date.toISOString().split('T')[0],
+            next_pay_date:loanFormData.next_payment_date,
+            bal_amount:loanFormData.loan_amount,
+            customer: searchCustomer
+        }
+        
         try {
             await axios.post('http://localhost:8000/create-loan/', loanData, {
                 headers: {
@@ -74,11 +93,15 @@ export default function CreateLoan() {
 }
 
 function LoanCreation({ loanFormData, setLoanFormData }) {
+    const date = new Date();
+    const today = date.toISOString().split('T')[0];
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (!["payment_frequency", "next_payment_date"].includes(name) && !/^\d*$/.test(value)) {
             return;
         }
+
         setLoanFormData({ ...loanFormData, [name]: value });
     };
 
@@ -88,28 +111,25 @@ function LoanCreation({ loanFormData, setLoanFormData }) {
             <h5 className="loan-title">Loan details</h5>
             <div className='row'>
                 <div className="col">
+                    <label className="form-label">Payment amount</label>
+                    <input type="text" name="payment_amount" className="form-control"
+                        value={loanFormData.payment_amount || ''} onChange={handleChange} required />
+                </div>
+                <div className="col">
                     <label className="form-label">Loan amount</label>
                     <input type="text" name="loan_amount" className="form-control"
                         value={loanFormData.loan_amount || ''} onChange={handleChange} required />
                 </div>
                 <div className="col">
-                    <label className="form-label">Advance amount</label>
-                    <input type="text" name="advance_amount" className="form-control"
-                        value={loanFormData.advance_amount || ''} onChange={handleChange} required />
-                </div>
-                <div className="col">
-                    <label className="form-label">Emi amount</label>
-                    <input type="text" name="emi_amount" className="form-control"
-                        value={loanFormData.emi_amount || ''} onChange={handleChange} required />
+                    <label className="form-label">Interest</label>
+                    <input type="text" name="interest" className="form-control"
+                        value={loanFormData.payment_amount &&
+                            loanFormData.loan_amount &&
+                            (loanFormData.payment_amount - loanFormData.loan_amount).toFixed(2) || ''} disabled />
                 </div>
             </div>
 
             <div className='row mt-2'>
-                <div className="col">
-                    <label className="form-label">Term</label>
-                    <input type="text" name="term" className="form-control"
-                        value={loanFormData.term || ''} onChange={handleChange} required />
-                </div>
                 <div className="col">
                     <label className="form-label">Payment frequency</label>
                     <select name="payment_frequency" className="form-control"
@@ -120,26 +140,45 @@ function LoanCreation({ loanFormData, setLoanFormData }) {
                     </select>
                 </div>
                 <div className="col">
-                    <label className="form-label">Total with interest</label>
-                    <input type="text" name="total_with_interest" className="form-control"
-                        value={loanFormData.total_with_interest || ''} onChange={handleChange} required />
+                    <label className="form-label">Term (months)</label>
+                    <input type="text" name="term" className="form-control"
+                        value={loanFormData.term || ''} onChange={handleChange} required />
+                </div>
+                <div className="col">
+                    <label className="form-label">Emi amount</label>
+                    <input type="text" name="emi_amount" className="form-control"
+                        value={
+                            loanFormData.loan_amount &&
+                                loanFormData.term &&
+                                loanFormData.payment_frequency
+                                ? (() => {
+                                    const principal = parseFloat(loanFormData.loan_amount);
+                                    const term =
+                                        loanFormData.payment_frequency === 'Weekly'
+                                            ? parseFloat(loanFormData.term) * 4
+                                            : parseFloat(loanFormData.term);
+
+                                    if (isNaN(principal) || isNaN(term) || term === 0) {
+                                        return '';
+                                    }
+
+                                    return (principal / term).toFixed(2);
+                                })()
+                                : ''
+                        } onChange={handleChange} disabled />
                 </div>
             </div>
 
             <div className='row mt-2'>
-                <div className="col">
-                    <label className="form-label">Due pending</label>
-                    <input type="text" name="due_pending" className="form-control"
-                        value={loanFormData.due_pending || ''} onChange={handleChange} required />
+                <div className="col-4">
+                    <label className="form-label">Loan date</label>
+                    <input type="date" name="loan_date" className="form-control"
+                        value={date.toISOString().split('T')[0] || ''}
+                        disabled />
                 </div>
-                <div className="col">
-                    <label className="form-label">Balance amount</label>
-                    <input type="text" name="balance_amount" className="form-control"
-                        value={loanFormData.balance_amount || ''} onChange={handleChange} required />
-                </div>
-                <div className="col">
+                <div className="col-4">
                     <label className="form-label">Next payment date</label>
-                    <input type="date" name="next_payment_date" className="form-control"
+                    <input type="date" name="next_payment_date" className="form-control" min={today}
                         value={loanFormData.next_payment_date || ''} onChange={handleChange} required />
                 </div>
             </div>
@@ -168,24 +207,24 @@ function CustomerSelection({ searchCustomer, setSearchCustomer }) {
 
     const handleCustomerChange = (e) => {
         const search = e.target.value.trim().toLowerCase(); // Ensure proper search formatting
-        setSearchCustomer((prev) => ({ ...prev, customer_name: e.target.value })); 
+        setSearchCustomer((prev) => ({ ...prev, customer_name: e.target.value }));
         setCustomerDropdown(true);
-    
+
         if (search === "") {
             setFilteredCustomers([]);
             return;
         }
-    
+
         if (customers?.length > 0) {
             const filtered = customers.filter((cust) =>
                 (`${cust.customer_name} ${cust.mph}`.toLowerCase().includes(search))
             );
-    
+
             setFilteredCustomers(filtered);
         }
-    
+
     };
-    
+
 
     const handleCustomer = (customer) => {
         setSearchCustomer(customer);
@@ -214,8 +253,8 @@ function CustomerSelection({ searchCustomer, setSearchCustomer }) {
             </div>
 
             {customerDropdown && searchCustomer?.customer_name?.length > 0 && (
-                <div className='dropdown-menu show mt-1' style={{ maxHeight:'200px', overflowY:'auto' }}>
-                    <table className='table table-hover' style={{width:'285px'}}>
+                <div className='dropdown-menu show mt-1' style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                    <table className='table table-hover' style={{ width: '285px' }}>
                         <thead>
                             <tr>
                                 <th>Customer Name</th>

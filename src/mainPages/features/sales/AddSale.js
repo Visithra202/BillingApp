@@ -61,7 +61,7 @@ export default function AddSale() {
       bill_no: billNo,
       customer: selectedCustomer,
       sale_products: selectedProducts.map((item) => ({
-        product: item.product.item_id,
+        product: item.product,
         quantity: item.sale_quantity,
         unit_price: item.unit_price,
         total_price: item.total_price,

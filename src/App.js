@@ -20,7 +20,7 @@ function App() {
           <div className='sidebar bg-dark col-auto text-light px-2'>
             <Side_bar />
           </div>
-          <div className='mainbar col p-0 '>
+          <div className='mainbar col p-0' style={{height:'100%'}}>
             <Main_bar setLogin={setLogin}/>
           </div>
         {/* </>} */}

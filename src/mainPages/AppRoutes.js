@@ -19,6 +19,8 @@ import Users from './features/master_data/Users'
 import SaleDetails from './features/sales/SaleDetails'
 import LoanDetails from './features/loan/LoanDetails'
 import PrintSale from './features/sales/PrintSale'
+import LoanCollection from './features/loan/LoanCollection'
+import AddLoanPayment from './features/loan/AddLoanPayment'
 
 export default function AppRoutes() {
   return (
@@ -64,7 +66,8 @@ export default function AppRoutes() {
         <Route path='/createLoan' element={<CreateLoan />}></Route>
         <Route path='/loanList' element={<LoanList />}></Route>
         <Route path='/loanDetails' element={<LoanDetails />}></Route>
-
+        <Route path='/loanCollection' element={<LoanCollection/>}></Route>
+        <Route path='/addLoanPayment' element={<AddLoanPayment/>}></Route>
 
       </Routes>
     </div>

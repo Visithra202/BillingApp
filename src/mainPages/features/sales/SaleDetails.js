@@ -7,7 +7,7 @@ export default function SaleDetails() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { sale = {}, customer = {}, sale_products = [] } = location.state || {};
+  const [sale, setSale] = useState(location.state?.sale || {});
 
   const [searchTerm, setSearchTerm] = useState('');
   const [dropdown, setDropdown] = useState(false);
@@ -27,19 +27,6 @@ export default function SaleDetails() {
       .catch((error) => {
         console.error('Error Fetching Sales')
       })
-
-    axios.get('http://localhost:8000/get-sale-items-list/')
-      .then(response => {
-        setSaleItems(response.data)
-      })
-      .catch(error => {
-        console.error('Error Fetching SaleItems ' + error)
-      })
-    axios.get('http://localhost:8000/get-stock-list/')
-      .then(response => setItems(response.data))
-      .catch(error => {
-        console.error('Error Fetching Items ' + error)
-      })
   }, [])
 
   const handleChange = (e) => {
@@ -53,7 +40,9 @@ export default function SaleDetails() {
   };
 
   const handleDisplaySales = (sale) => {
-
+    setSale(sale);
+    setDropdown(false);
+    setSearchTerm('');
   }
 
   return (
@@ -80,7 +69,7 @@ export default function SaleDetails() {
                 sales.length>0?(
                   filteredSales.length>0?(
                     filteredSales.map((sale, index)=>(
-                      <tr>
+                      <tr onClick={()=>handleDisplaySales(sale)}>
                         <td>{sale.bill_no}</td>
                         <td>{sale.customer?.customer_name}</td>
                       </tr>
@@ -96,7 +85,6 @@ export default function SaleDetails() {
           </table>
         </div>
       )}
-
       {/* Invoice and Customer */}
       <div className='row bg-light mt-1 mb-0 mx-0 p-2 border rounded shadow d-flex'>
         <div className='col'>
@@ -109,11 +97,11 @@ export default function SaleDetails() {
         </div>
         <div className='col'>
           <label className='form-label'>Customer name</label>
-          <span className='form-control border rounded-pill px-2'>{customer.customer_name || ''}</span>
+          <span className='form-control border rounded-pill px-2'>{sale.customer?.customer_name || ''}</span>
         </div>
         <div className='col'>
           <label className='form-label'>Customer number</label>
-          <span className='form-control border rounded-pill px-2'>{customer.mph || ''}</span>
+          <span className='form-control border rounded-pill px-2'>{sale.customer?.mph || ''}</span>
         </div>
       </div>
 
@@ -130,19 +118,19 @@ export default function SaleDetails() {
             </tr>
           </thead>
           <tbody>
-            {sale_products?.length > 0 ? (
-              sale_products.map((item, index) => (
+            {sale.sale_products?.length > 0 ? (
+              sale.sale_products.map((item, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{item.item_name}</td>
-                  <td className='text-end'>{item.unit_price}</td>
-                  <td className='text-end'>{item.quantity}</td>
-                  <td className='text-end'>{item.total_price}</td>
+                  <td>{item.product.item_name||''}</td>
+                  <td className='text-end'>{item.unit_price||''}</td>
+                  <td className='text-end'>{item.quantity||''}</td>
+                  <td className='text-end'>{item.total_price||''}</td>
                 </tr>
               ))
             ) : (
               <tr className='text-center'>
-                <td colSpan='5'>Sale not selected</td>
+                <td colSpan='5'>Products not found</td>
               </tr>
             )}
           </tbody>

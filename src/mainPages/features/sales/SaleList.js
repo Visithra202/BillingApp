@@ -21,41 +21,14 @@ export default function SaleList() {
             .catch((error) => {
                 console.error('Error Fetching Sales')
             })
-        
-        axios.get('http://localhost:8000/get-sale-items-list/')
-            .then(response => {
-                setSaleItems(response.data)
-            })
-            .catch(error => {
-                console.error('Error Fetching SaleItems ' + error)
-            })
-        axios.get('http://localhost:8000/get-stock-list/')
-            .then(response => setItems(response.data))
-            .catch(error => {
-                console.error('Error Fetching Items ' + error)
-            })
     }, [])
 
     const handlePrint = (sale, string) => {
-        const customer = sale.customer
-
-        const sale_products = saleItems
-            .filter(saleItem => saleItem.sale === sale.bill_no)
-            .map(saleItem => {
-                const item = items.find(it => (it.item_id === saleItem.product))
-                return {
-                    item_name: item.item_name,
-                    ...saleItem,
-
-                };
-            });
 
         if (string === 'print') {
             navigate('/printSale', {
                 state: {
                     sale,
-                    customer,
-                    sale_products,
                     from: '/saleList',
                 }
             });
@@ -64,9 +37,7 @@ export default function SaleList() {
         else if (string === 'details') {
             navigate('/saleDetails', {
                 state: {
-                    sale,
-                    customer,
-                    sale_products,
+                    sale
                 }
             });
             return;
@@ -114,17 +85,15 @@ export default function SaleList() {
                                             <td>
                                                 {(() => {
                                                     let prods = '';
-                                                    saleItems.forEach(saleItem => {
-                                                        if (saleItem.sale === sale.bill_no) {
-                                                            const item = items.find(it => it.item_id === saleItem.product);
-                                                            if (item) {
-                                                                prods += (prods ? ', ' : '') + item.item_name;
-                                                            }
+                                                    sale.sale_products?.length > 0 && sale.sale_products.forEach((prod) => {
+                                                        if (prod) {
+                                                            prods += (prods ? ', ' : '') + prod.product.item_name;
                                                         }
                                                     });
-                                                    return prods || '-';
+                                                    return prods || '';
                                                 })()}
                                             </td>
+
                                             <td>
                                                 {(() => {
                                                     let ans = '';

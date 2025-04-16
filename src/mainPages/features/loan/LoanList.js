@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export default function LoanList() {
   const [loans, setLoans] = useState([]);
+  const navigate = useNavigate()
 
   useEffect(() => {
     axios.get('http://localhost:8000/get-loan-list/')
@@ -14,10 +16,11 @@ export default function LoanList() {
   }, [])
 
   return (
-    <div className='container-fluid'>
+    <div className='container' style={{ height: 'calc(100vh - 85px)' }}>
+
 
       <div className='border border-secondary bg-white rounded-5 shadow  my-2 scroll-bar'
-        style={{ minHeight: '565px', maxHeight: '565px', overflowY: 'auto' }}>
+        style={{ minHeight: '100%', maxHeight: '100%', overflowY: 'auto' }}>
         <table className='itmlst table table-hover'>
           <thead className=' rounded-top-5' style={{ position: 'sticky', top: '0', zIndex: '1', }}>
             <tr>
@@ -37,7 +40,7 @@ export default function LoanList() {
             {loans.length > 0 ? (
               loans.map((loan, index) => (
                 <tr key={index}>
-                  <td>{loan.loan_accno}</td>
+                  <td className='text-primary' style={{ cursor: 'pointer' }} onClick={() => navigate('/loanDetails', { state: { loan } })}>{loan.loan_accno}</td>
                   <td>{loan.loan_date}</td>
                   <td>
                     {loan.customer?.customer_name || ""}

@@ -111,9 +111,9 @@ function BrandList({ reload, setReload }) {
   }
 
   return (
-    <div>
+    <div className='container'  style={{ height: 'calc(100vh - 150px)' }}>
       <div className='d-flex justify-content-center pb-2' ><h5>Brand list</h5></div>
-      <div className='scroll-bar' style={{ maxHeight: '450px', overflowY: 'auto' }}>
+      <div className='scroll-bar' style={{minHeight:'50%', maxHeight: '90%', overflowY: 'auto' }}>
         <table className="table table-light">
           {/* <thead className="table-head"> */}
           <thead className="table-head" style={{ position: 'sticky', top: '0', zIndex: '1' }}>

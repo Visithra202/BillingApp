@@ -5,15 +5,15 @@ import Loader from '../../components/Loader';
 import UseClickOutside from '../../hooks/UseClickOutside';
 
 
-export default function SaleDetails() {
+export default function PurchaseDetails() {
 
   const location = useLocation();
-  const [sale, setSale] = useState(location.state?.sale || {});
+  const [purchase, setPurchase] = useState(location.state?.purchase || {});
 
   const [searchTerm, setSearchTerm] = useState('');
   const [dropdown, setDropdown] = useState(false);
-  const [sales, setSales] = useState([]);
-  const [filteredSales, setFilteredSales] = useState([]);
+  const [purchases, setPurchases] = useState([]);
+  const [filteredPurchase, setFilteredPurchase] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -21,13 +21,13 @@ export default function SaleDetails() {
 
 
   useEffect(() => {
-    axios.get('http://localhost:8000/get-sale-list/')
+    axios.get('http://localhost:8000/get-purchase-list/')
       .then((response) => {
-        setSales(response.data)
+        setPurchases(response.data)
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error Fetching Sales')
+        console.error('Error Fetching purchases')
       })
   }, [])
 
@@ -35,14 +35,14 @@ export default function SaleDetails() {
     const search = e.target.value;
     setSearchTerm(search);
     setDropdown(true);
-    const filtered = sales.filter((sale) =>
-      (`${sale.bill_no} ${sale.customer?.customer_name} ${sale.sale_date} `.toLowerCase().includes(search.toLowerCase()))
+    const filtered = purchases.filter((purch) =>
+      (`${purch.purchase_id} ${purch.seller?.seller_name} ${purch.purchase_date} `.toLowerCase().includes(search.toLowerCase()))
     );
-    setFilteredSales(filtered);
+    setFilteredPurchase(filtered);
   };
 
-  const handleDisplaySales = (sale) => {
-    setSale(sale);
+  const handleDisplayPurchases = (purchase) => {
+    setPurchase(purchase);
     setDropdown(false);
     setSearchTerm('');
   }
@@ -59,51 +59,51 @@ export default function SaleDetails() {
           <table className='table table-hover' style={{width:'300px'}}>
             <thead>
               <tr>
-                <th>Bill no</th>
-                <th>Customer</th>
+                <th>Purchase Id</th>
+                <th>Seller</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <Loader message='Fetching sales' />
+                <Loader message='Fetching purchases' />
               ) :
                 (
-                sales.length>0?(
-                  filteredSales.length>0?(
-                    filteredSales.map((sale, index)=>(
-                      <tr onClick={()=>handleDisplaySales(sale)}>
-                        <td>{sale.bill_no}</td>
-                        <td>{sale.customer?.customer_name}</td>
+                purchases.length>0?(
+                  filteredPurchase.length>0?(
+                    filteredPurchase.map((pur, index)=>(
+                      <tr key={index} onClick={()=>handleDisplayPurchases(pur)}>
+                        <td>{pur.purchase_id}</td>
+                        <td>{pur.seller?.seller_name}</td>
                       </tr>
                     ))
                   ):(
                     <tr><td colSpan='2'>Matches not found</td></tr>
                   )
                 ):(
-                  <tr><td colSpan='2'>Sales not found</td></tr>
+                  <tr><td colSpan='2'>Purchase not found</td></tr>
                 )
               )}
             </tbody>
           </table>
         </div>
       )}
-      {/* Invoice and Customer */}
+      {/* Invoice and Seller */}
       <div className='row bg-light mt-1 mb-0 mx-0 p-2 border rounded shadow d-flex'>
         <div className='col'>
-          <label className='form-label'>Bill no</label>
-          <span className='form-control border rounded-pill px-2'>{sale.bill_no || ''}</span>
+          <label className='form-label'>Purchase Id</label>
+          <span className='form-control border rounded-pill px-2'>{purchase.purchase_id || ''}</span>
         </div>
         <div className='col'>
-          <label className='form-label'>Sale date</label>
-          <span className='form-control border rounded-pill px-2'>{sale.sale_date || ''}</span>
+          <label className='form-label'>Purchase date</label>
+          <span className='form-control border rounded-pill px-2'>{purchase.purchase_date || ''}</span>
         </div>
         <div className='col'>
-          <label className='form-label'>Customer name</label>
-          <span className='form-control border rounded-pill px-2'>{sale.customer?.customer_name || ''}</span>
+          <label className='form-label'>Seller name</label>
+          <span className='form-control border rounded-pill px-2'>{purchase.seller?.seller_name || ''}</span>
         </div>
         <div className='col'>
-          <label className='form-label'>Customer number</label>
-          <span className='form-control border rounded-pill px-2'>{sale.customer?.mph || ''}</span>
+          <label className='form-label'>Seller number</label>
+          <span className='form-control border rounded-pill px-2'>{purchase.seller?.seller_mph || ''}</span>
         </div>
       </div>
 
@@ -120,8 +120,8 @@ export default function SaleDetails() {
             </tr>
           </thead>
           <tbody>
-            {sale.sale_products?.length > 0 ? (
-              sale.sale_products.map((item, index) => (
+            {purchase.purchase_products?.length > 0 ? (
+              purchase.purchase_products.map((item, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{item.product.item_name||''}</td>
@@ -142,27 +142,27 @@ export default function SaleDetails() {
       <div className='row bg-light mt-1 mb-0 mx-0 p-2 border rounded shadow d-flex'>
         <div className='col'>
           <label className='form-label'>Cash</label>
-          <span className='form-control border rounded-pill px-2'>{sale.payment?.cash || ''}</span>
+          <span className='form-control border rounded-pill px-2'>{purchase.purchase_payment?.cash || ''}</span>
         </div>
         <div className='col'>
           <label className='form-label'>Account</label>
-          <span className='form-control border rounded-pill px-2'>{sale.payment?.account || ''}</span>
+          <span className='form-control border rounded-pill px-2'>{purchase.purchase_payment?.account || ''}</span>
         </div>
         <div className='col'>
           <label className='form-label'>Credit</label>
-          <span className='form-control border rounded-pill px-2'>{sale.payment?.credit || ''}</span>
+          <span className='form-control border rounded-pill px-2'>{purchase.purchase_payment?.credit || ''}</span>
         </div>
         <div className='col'>
           <label className='form-label'>Discount</label>
-          <span className='form-control border rounded-pill px-2'>{sale.discount || ''}</span>
+          <span className='form-control border rounded-pill px-2'>{purchase.discount || ''}</span>
         </div>
         <div className='col'>
           <label className='form-label'>Total amount</label>
-          <span className='form-control border rounded-pill px-2'>{sale.total_amount || ''}</span>
+          <span className='form-control border rounded-pill px-2'>{purchase.total_amount || ''}</span>
         </div>
         <div className='col'>
           <label className='form-label'>Balance</label>
-          <span className='form-control border rounded-pill px-2'>{sale.balance || ''}</span>
+          <span className='form-control border rounded-pill px-2'>{purchase.balance || ''}</span>
         </div>
       </div>
 

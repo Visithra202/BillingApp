@@ -2,6 +2,7 @@ import axios from 'axios';
 import { debounce } from 'lodash';
 import React, { useEffect, useState } from 'react'
 import Loader from '../../components/Loader';
+import UseClickOutside from '../../hooks/UseClickOutside';
 
 export default function AddPurchase() {
   const date = new Date();
@@ -273,6 +274,8 @@ function ProductSelection({ dropdown, setDropdown, searchProduct, setSearchProdu
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const dropdownRef = UseClickOutside(() => setDropdown(null));
+
 
   useEffect(() => {
     axios.get('http://localhost:8000/get-stock-list/')
@@ -338,48 +341,50 @@ function ProductSelection({ dropdown, setDropdown, searchProduct, setSearchProdu
         <label className='form-label'>Product</label>
         <input className='form-control border rounded-pill px-2' placeholder='Search Product'
           onChange={handleProductChange} value={searchProduct} style={{ width: '250px' }} />
+
+
+        {dropdown === 'products' && searchProduct.length > 0 &&
+          <div ref={dropdownRef} className='dropdown-menu show mt-2' style={{  maxHeight: '35%', overflowY: 'auto' }} >
+            <table className='table table-hover' style={{ width: '250px' }}>
+              <thead>
+                <tr>
+                  <th>ProductName</th>
+                  <th>Category</th>
+                  <th>Brand</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  products.length > 0 ? (
+                    loading ? (
+                      <tr><td colSpan='4'><Loader size='sm' message='Fetching products' /></td></tr>
+                    ) : (
+                      filteredProducts.length > 0 ? (
+                        filteredProducts.map((product, index) => (
+                          <tr key={index} className='custom-hover' onClick={() => handleProduct(product)}>
+                            <td>{product.item_name}</td>
+                            <td>{product.category}</td>
+                            <td>{product.brand}</td>
+                            <td>{product.sale_price}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="4" className="text-center">No Matches Found</td>
+                        </tr>
+                      )
+                    )
+                  ) : (
+                    <tr><td colSpan="4" className="text-center">Products not found</td></tr>
+                  )
+                }
+              </tbody>
+            </table>
+          </div>}
       </div>
 
-      {dropdown === 'products' && searchProduct.length > 0 &&
-        <div className='dropdown-menu show' style={{ maxHeight: '35%', overflowY: 'auto' }} >
-          <table className='table table-hover' style={{ width: '250px' }}>
-            <thead>
-              <tr>
-                <th>ProductName</th>
-                <th>Category</th>
-                <th>Brand</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                products.length > 0 ? (
-                  loading ? (
-                    <tr><td colSpan='4'><Loader size='sm' message='Fetching products' /></td></tr>
-                  ) : (
-                    filteredProducts.length > 0 ? (
-                      filteredProducts.map((product, index) => (
-                        <tr key={index} className='custom-hover' onClick={() => handleProduct(product)}>
-                          <td>{product.item_name}</td>
-                          <td>{product.category}</td>
-                          <td>{product.brand}</td>
-                          <td>{product.sale_price}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="4" className="text-center">No Matches Found</td>
-                      </tr>
-                    )
-                  )
-                ) : (
-                  <tr><td colSpan="4" className="text-center">Products not found</td></tr>
-                )
-              }
-            </tbody>
-          </table>
-        </div>
-      }
+
     </>
   )
 }
@@ -389,6 +394,8 @@ function SellerSelection({ dropdown, setDropdown, searchSeller, setSearchSeller,
   const [sellers, setSellers] = useState([]);
   const [filteredSellers, setFilteredSellers] = useState([]);
   const [loading, setLoading] = useState(true)
+  const dropdownRef = UseClickOutside(() => setDropdown(null));
+
 
   useEffect(() => {
     axios.get('http://localhost:8000/get-seller-list/')
@@ -433,7 +440,7 @@ function SellerSelection({ dropdown, setDropdown, searchSeller, setSearchSeller,
         onChange={handleSellerChange} value={searchSeller} style={{ width: '250px' }} />
 
       {dropdown === 'seller' && searchSeller.length > 0 &&
-        <div className='dropdown-menu show' style={{ marginTop: '70px', height: '100px' }} >
+        <div ref={dropdownRef} className='dropdown-menu show' style={{marginTop:'70px', width: '250px', maxHeight:'35%', overflowY:'auto' }} >
           <table className='table table-hover'>
             <thead>
               <tr>

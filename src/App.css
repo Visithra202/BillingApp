@@ -1,6 +1,7 @@
-html, body {
+html, body, #root {
   height: 100%;
 }
+
 
 .sidebar {
   width: 250px !important;
@@ -60,7 +61,7 @@ td {
   font-weight: bold;
 }
 
-.form-control, .form-select{
+.form-control, .form-select, .loan-control{
   font-size: 13px !important;
   height: 35px;
 }

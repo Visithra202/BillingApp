@@ -118,7 +118,7 @@ function LoanMenu() {
             </li>
             <li className='pt-1'>
                 <Link to='loanCollection' className='text-decoration-none text-light'>
-                    <span><i class="bi bi-collection me-2"></i>Loan collection</span>
+                    <span><i className="bi bi-collection me-2"></i>Loan collection</span>
                 </Link>
             </li>
         </ul>
@@ -163,7 +163,7 @@ function PurchaseMenu() {
 
             </li>
             <li className='pt-1'>
-                <Link to='#' className='text-decoration-none text-light'>
+                <Link to='purchaseDetails' className='text-decoration-none text-light'>
                     <span><i className="bi bi-ticket-detailed me-2"></i>Purchase details</span>
                 </Link>
             </li>

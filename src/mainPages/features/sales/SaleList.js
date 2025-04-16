@@ -5,11 +5,7 @@ import Loader from '../../components/Loader';
 
 export default function SaleList() {
     const [saleList, setSaleList] = useState([]);
-    // const [reload, setReload] = useState(true)
     const navigate = useNavigate();
-
-    const [saleItems, setSaleItems] = useState([]);
-    const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -49,10 +45,10 @@ export default function SaleList() {
 
 
     return (
-        <div className='container-fluid'>
+        <div className='container'  style={{ height: 'calc(100vh - 85px)' }}>
 
             <div className='border border-secondary bg-white rounded-5 shadow  my-2 scroll-bar'
-                style={{ minHeight: '565px', maxHeight: '565px', overflowY: 'auto' }}>
+                style={{ minHeight: '100%', maxHeight: '100%', overflowY: 'auto' }}>
                 <table className='itmlst table table-hover'>
                     <thead className=' rounded-top-5' style={{ position: 'sticky', top: '0', zIndex: '1' }}>
                         <tr>
@@ -108,11 +104,6 @@ export default function SaleList() {
                                             <td className='text-end'>{sale.total_amount}</td>
                                             <td className='text-end'>{sale.discount}</td>
                                             <td className='text-end'>{sale.balance}</td>
-                                            {/* <td className='text-center'>
-                                                <i className="bi bi-pencil-square text-primary mx-1" style={{ cursor: 'pointer' }}
-                                                    onClick={() => navigate('/editItem', { state: { sale } })}></i>
-                                                <i className="bi bi-trash-fill text-danger mx-1" style={{ cursor: 'pointer' }} onClick={() => handleDelete(sale)}></i>
-                                            </td> */}
                                             <td className="text-center">
                                                 <i
                                                     className="bi bi-printer-fill"

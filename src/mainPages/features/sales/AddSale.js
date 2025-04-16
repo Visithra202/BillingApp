@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 import Loader from '../../components/Loader';
+import UseClickOutside from '../../hooks/UseClickOutside';
+
 
 export default function AddSale() {
   const date = new Date();
@@ -276,6 +278,8 @@ function ProductSelection({ activeDropdown, setActiveDropdown, searchProduct, se
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const dropdownRef = UseClickOutside(() => setActiveDropdown(null));
+
 
   useEffect(() => {
     axios.get('http://localhost:8000/get-stock-list/')
@@ -357,7 +361,7 @@ function ProductSelection({ activeDropdown, setActiveDropdown, searchProduct, se
         onChange={handleProductChange} value={searchProduct} style={{ width: '250px' }} />
 
       {activeDropdown === 'product' && searchProduct.length > 0 &&
-        <div className='dropdown-menu show' style={{ marginTop: '70px', height: '100px' }} >
+        <div ref={dropdownRef} className='dropdown-menu show' style={{ marginTop: '70px', height: '100px' }} >
           <table className='table table-hover'>
             <thead>
               <tr>
@@ -408,6 +412,8 @@ function CustomerSelection({ activeDropdown, setActiveDropdown, searchCustomer, 
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [loading, setLoading] = useState(true)
 
+  const dropdownRef = UseClickOutside(() => setActiveDropdown(null));
+
   useEffect(() => {
     axios.get('http://localhost:8000/get-customer-list/')
       .then((response) => {
@@ -451,7 +457,7 @@ function CustomerSelection({ activeDropdown, setActiveDropdown, searchCustomer, 
         onChange={handleCustomerChange} value={searchCustomer} style={{ width: '250px' }} />
 
       {activeDropdown === 'customer' && searchCustomer.length > 0 &&
-        <div className='dropdown-menu show' style={{ marginTop: '70px', height: '100px' }} >
+        <div ref={dropdownRef} className='dropdown-menu show' style={{ marginTop: '70px', height: '100px' }} >
           <table className='table table-hover'>
             <thead>
               <tr>

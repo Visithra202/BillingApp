@@ -21,6 +21,7 @@ import LoanDetails from './features/loan/LoanDetails'
 import PrintSale from './features/sales/PrintSale'
 import LoanCollection from './features/loan/LoanCollection'
 import AddLoanPayment from './features/loan/AddLoanPayment'
+import PurchaseDetails from './features/purchase/PurchaseDetails'
 
 export default function AppRoutes() {
   return (
@@ -43,6 +44,7 @@ export default function AppRoutes() {
         {/* purchase */}
         <Route path='/addPurchase' element={<AddPurchase />}></Route>
         <Route path='/purchaseList' element={<PurchaseList />}></Route>
+        <Route path='/purchaseDetails' element={<PurchaseDetails/>}></Route>
 
 
         {/* Item */}

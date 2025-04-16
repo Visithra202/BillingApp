@@ -17,16 +17,15 @@ export default function PrintSale() {
     },
   });
 
-
-
   useEffect(() => {
-    if (!location.state?.sale) {
+    if (!sale) {
       navigate('/dashboard');
       return;
     }
-    setContent(false)
+    setContent(false);
     handlePrint();
-  }, [])
+  }, [sale, handlePrint, navigate]);
+
 
   return (
     <div ref={contentRef} className='printContent p-5'>
@@ -34,15 +33,15 @@ export default function PrintSale() {
         <>
           <div className='row'>
             <div className='col'>
-              <div><img src='assets/bill_logo.png' className='mt-2' style={{ width: '20%' }} />
+              <div><img src='assets/bill_logo.png' alt='Invoice logo' className='mt-2' style={{ width: '20%' }} />
                 <h3 >Tax Invoice</h3>
               </div>
             </div>
 
             <div className='col d-flex flex-column  align-items-end mt-3'>
               <h5 style={{ color: 'rgba(19, 117, 156, 0.88)' }}>Kavins Technologies</h5>
-              <span><i class="bi bi-telephone-fill me-2"></i>+91 9876543210</span>
-              <span><i class="bi bi-geo-alt-fill me-2"></i>Idaikal</span>
+              <span><i className="bi bi-telephone-fill me-2"></i>+91 9876543210</span>
+              <span><i className="bi bi-geo-alt-fill me-2"></i>Idaikal</span>
             </div>
           </div>
           <hr />
@@ -51,9 +50,9 @@ export default function PrintSale() {
             <div className='col '>
               <h6>Bill To : </h6>
               <div className='ps-2 d-flex flex-column'>
-                <span><i class="bi bi-person-fill me-2"></i>{sale?.customer?.customer_name}</span>
-                <span><i class="bi bi-telephone-fill me-2"></i>{sale?.customer.mph}</span>
-                <span><i class="bi bi-geo-alt-fill me-2"></i>{sale?.customer.address}</span>
+                <span><i className="bi bi-person-fill me-2"></i>{sale?.customer?.customer_name}</span>
+                <span><i className="bi bi-telephone-fill me-2"></i>{sale?.customer.mph}</span>
+                <span><i className="bi bi-geo-alt-fill me-2"></i>{sale?.customer.address}</span>
               </div>
             </div>
             <div className='col d-flex flex-column align-items-end'>

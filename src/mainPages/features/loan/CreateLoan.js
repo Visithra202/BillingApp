@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Loader from '../../components/Loader';
 import { useNavigate } from 'react-router-dom';
+import UseClickOutside from '../../hooks/UseClickOutside';
+
 
 export default function CreateLoan() {
     const [loanFormData, setLoanFormData] = useState({});
@@ -11,13 +13,11 @@ export default function CreateLoan() {
     const calculateEmi = (loan_amount, term, frequency) => {
         const principal = parseFloat(loan_amount);
         const duration = frequency === 'Weekly' ? parseFloat(term) * 4 : parseFloat(term);
-      
-        if (isNaN(principal) || isNaN(duration) || duration === 0) return null;
-      
-        return (principal / duration).toFixed(2);
-      };
-      
 
+        if (isNaN(principal) || isNaN(duration) || duration === 0) return null;
+
+        return (principal / duration).toFixed(2);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,16 +30,16 @@ export default function CreateLoan() {
         const loanData = {
             payment_amount: loanFormData.payment_amount,
             loan_amount: loanFormData.loan_amount,
-            interest:loanFormData.payment_amount-loanFormData.loan_amount,
+            interest: loanFormData.payment_amount - loanFormData.loan_amount,
             payment_freq: loanFormData.payment_frequency,
             term: loanFormData.term,
             emi_amount: calculateEmi(loanFormData.loan_amount, loanFormData.term, loanFormData.payment_frequency),
-            loan_date:date.toISOString().split('T')[0],
-            next_pay_date:loanFormData.next_payment_date,
-            bal_amount:loanFormData.loan_amount,
+            loan_date: date.toISOString().split('T')[0],
+            next_pay_date: loanFormData.next_payment_date,
+            bal_amount: loanFormData.loan_amount,
             customer: searchCustomer
         }
-        
+
         try {
             await axios.post('http://localhost:8000/create-loan/', loanData, {
                 headers: {
@@ -125,7 +125,7 @@ function LoanCreation({ loanFormData, setLoanFormData }) {
                     <input type="text" name="interest" className="form-control"
                         value={loanFormData.payment_amount &&
                             loanFormData.loan_amount &&
-                            (loanFormData.payment_amount - loanFormData.loan_amount).toFixed(2) || ''} disabled />
+                            (loanFormData.payment_amount - loanFormData.loan_amount).toFixed(2)} disabled />
                 </div>
             </div>
 
@@ -193,6 +193,8 @@ function CustomerSelection({ searchCustomer, setSearchCustomer }) {
     const [filteredCustomers, setFilteredCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const dropdownRef = UseClickOutside(() => setCustomerDropdown(false));
+
 
     useEffect(() => {
         axios.get('http://localhost:8000/get-customer-list/')
@@ -253,7 +255,7 @@ function CustomerSelection({ searchCustomer, setSearchCustomer }) {
             </div>
 
             {customerDropdown && searchCustomer?.customer_name?.length > 0 && (
-                <div className='dropdown-menu show mt-1' style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                <div ref={dropdownRef} className='dropdown-menu show mt-1' style={{ maxHeight: '200px', overflowY: 'auto' }}>
                     <table className='table table-hover' style={{ width: '285px' }}>
                         <thead>
                             <tr>
